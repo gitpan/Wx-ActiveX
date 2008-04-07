@@ -1,11 +1,10 @@
 #############################################################################
-## Name:        Flash.pm
+## Name:        lib/Wx/ActiveX/Flash.pm
 ## Purpose:     Wx::ActiveX::Flash (Shockwave Flash)
 ## Author:      Graciliano M. P.
-## Modified by:
 ## Created:     14/04/2003
-## RCS-ID:      
-## Copyright:   (c) 2002 Graciliano M. P.
+## SVN-ID:      $Id: Flash.pm 2354 2008-04-05 23:40:04Z mdootson $
+## Copyright:   (c) 2002 - 2008 Graciliano M. P., Mattia Barbon, Mark Dootson
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
 #############################################################################
@@ -13,10 +12,9 @@
 package Wx::ActiveX::Flash ;
 use Wx::ActiveX ;
 use strict ;
+use base qw( Wx::ActiveX );
 
-use vars qw(@ISA $VERSION);
-@ISA = qw(Wx::ActiveX);
-$VERSION = '0.02';
+our $VERSION = '0.06'; # Wx::ActiveX Version
 
 #######
 # NEW #
@@ -25,9 +23,9 @@ $VERSION = '0.02';
 sub new {
   my $class = shift ;
   my $parent = shift ;
-  my $activex = Wx::ActiveX->new( $parent , "ShockwaveFlash.ShockwaveFlash" , @_ ) ;
-  $activex = Wx::ActiveX::hash_ref($activex,'Wx::ActiveX::Flash') ;
-  return( $activex ) ;
+  my $self = $class->SUPER::new(  $parent , "ShockwaveFlash.ShockwaveFlash" , @_  );
+  
+  return( $self ) ;
 }
 
 #######

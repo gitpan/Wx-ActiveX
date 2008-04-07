@@ -1,55 +1,55 @@
 #############################################################################
-## Name:        lib/Wx/ActiveX/IE.pm
-## Purpose:     Wx::ActiveX::IE (Internet Explorer)
+## Name:        lib/Wx/ActiveX/Mozilla.pm
+## Purpose:     Wx::ActiveX::Browser (Mozilla)
 ## Author:      Graciliano M. P.
 ## Created:     01/09/2002
-## SVN-ID:      $Id: IE.pm 2355 2008-04-07 07:03:52Z mdootson $
+## SVN-ID:      $Id: Mozilla.pm 2355 2008-04-07 07:03:52Z mdootson $
 ## Copyright:   (c) 2002 - 2008 Graciliano M. P., Mattia Barbon, Mark Dootson
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
 #############################################################################
 
-package Wx::ActiveX::IE;
+package Wx::ActiveX::Mozilla;
 use strict ;
 use Wx::ActiveX;
-use base qw( Wx::IEHtmlWin );
+use base qw( Wx::MozillaHtmlWin );
 
 our $VERSION = '0.06'; # Wx::ActiveX Version
 
 our (@EXPORT_OK, %EXPORT_TAGS);
 $EXPORT_TAGS{everything} = \@EXPORT_OK;
 
-# my $PROGID = 'Internet.Explorer';
+#my $PROGID = 'Mozilla.Browser';
 
-my $exporttag = 'iexplorer';
-my $eventname = 'IE';
-
-# events below implemented as EVT_ACTIVEX_EVENTNAME ($$$)
-# e.g EVT_ACTIVEX_IE_ONQUIT($eventhandler, $control, \&event_function);
-# The Event ID will be exported as EVENTID_AX_IE_ONQUIT
+my $exporttag = 'mozilla';
+my $eventname = 'MOZILLA';
 
 our @activexevents = qw (
-    BeforeNavigate2
-    ClientToHostWindow
-    CommandStateChange
-    DocumentComplete
-    DownloadBegin
+    StatusTextChange
     DownloadComplete
-    FileDownload
-    NavigateComplete2
-    NewWindow2
-    OnFullScreen
-    OnMenuBar
-    OnQuit
-    OnStatusBar
-    OnTheaterMode
-    OnToolBar
-    OnVisible
+    CommandStateChange
+    DownloadBegin
     ProgressChange
     PropertyChange
-    SetSecureLockIcon
-    StatusTextChange
     TitleChange
+    BeforeNavigate2
+    NewWindow2
+    NavigateComplete2
+    OnQuit
+    OnVisible
+    OnToolBar
+    OnMenuBar
+    OnStatusBar
+    OnFullScreen
+    DocumentComplete
+    OnTheaterMode
+);
+
+# list for reference
+my @missingevents = qw(
+    ClientToHostWindow   
+    FileDownload
+    SetSecureLockIcon    
     WindowClosing
     WindowSetHeight
     WindowSetLeft
@@ -58,10 +58,12 @@ our @activexevents = qw (
     WindowSetWidth
 );
 
+
 # __PACKAGE__->activex_load_standard_event_types( $export_to_namespace, $eventidentifier, $exporttag, $elisthashref );
 # __PACKAGE__->activex_load_activex_event_types( $export_to_namespace, $eventidentifier, $exporttag, $elistarrayref );
 
 __PACKAGE__->activex_load_activex_event_types( __PACKAGE__, $eventname, $exporttag, \@activexevents );
+
 
 sub WxActiveXBrowserClass {
     return __PACKAGE__;
@@ -71,24 +73,25 @@ sub WxActiveXBrowserClass {
 
 __END__
 
+
 =head1 NAME
 
-Wx::ActiveX::IE - ActiveX interface for Internet Explorer. (Win32)
+Wx::ActiveX::Mozilla - ActiveX interface for Mozilla Browser ActiveX Control
 
 =head1 SYNOPSIS
 
-    use Wx::ActiveX::IE qw(:iexplorer);
+    use Wx::ActiveX::Mozilla qw(:mozilla);
     
     ............
 
-    my $browser = Wx::ActiveX::IE->new( $parent , -1 , wxDefaultPosition , wxDefaultSize );
-    EVT_ACTIVEX_IE_BEFORENAVIGATE2($this,$browser,\&on_evt_beforenavigate);
+    my $browser = Wx::ActiveX::Mozilla->new( $parent , -1 , wxDefaultPosition , wxDefaultSize );
+    EVT_ACTIVEX_MOZILLA_BEFORENAVIGATE2($this,$browser,\&on_evt_beforenavigate);
     
     ............
     
     $browser->LoadUrl("http://wxperl.sf.net");
     
-    #OR
+    #OR using common browser events
     
     use Wx::ActiveX::IE;
     use Wx::ActiveX::Mozilla;
@@ -96,7 +99,7 @@ Wx::ActiveX::IE - ActiveX interface for Internet Explorer. (Win32)
     
     ............
     
-    my $browserclass = $ShouldIUseIE ? 'Wx::ActiveX::IE' : 'Wx::ActiveX::Mozilla';
+    my $browserclass = $ShouldIUseMozilla ? 'Wx::ActiveX::Mozilla' : 'Wx::ActiveX::IE';
     my $browser = $browserclass->new( $parent , -1 , wxDefaultPosition , wxDefaultSize );
     EVT_ACTIVEX_BROWSER_BEFORENAVIGATE2($this,$browser,\&on_evt_beforenavigate);
     
@@ -106,7 +109,7 @@ Wx::ActiveX::IE - ActiveX interface for Internet Explorer. (Win32)
 
 =head1 DESCRIPTION
 
-This will implement the web browser Internet Explorer in your App, using the
+This will implement the Mozilla Browser in your App, using the
 interface Wx::ActiveX.
 
 =head1 METHODS
@@ -192,61 +195,44 @@ Show the Print Preview window.
 
 All the events use EVT_ACTIVEX. For example, the event BeforeNavigate2 can be declared usgin EVT_ACTIVEX:
 
-  EVT_ACTIVEX($parent , $IE , "BeforeNavigate2" , sub{...} ) ;
+  EVT_ACTIVEX($parent , $mozilla , "BeforeNavigate2" , sub{...} ) ;
 
-or using the ACTIVEX_IE event table:
+or using the ACTIVEX_MOZILLA event table:
 
-  EVT_ACTIVEX_IE_BEFORENAVIGATE2($parent , $IE , sub{...} ) ;
+  EVT_ACTIVEX_MOZILLA_BEFORENAVIGATE2($parent , $IE , sub{...} ) ;
 
 To import the events use:
 
   use Wx::ActiveX qw( EVT_ACTIVEX );
 
-  use Wx::ActiveX::IE qw(EVT_ACTIVEX EVT_ACTIVEX_IE_NEWWINDOW2 EVT_ACTIVEX_IE_STATUSTEXTCHANGE) ;
+  use Wx::ActiveX::Mozilla qw(EVT_ACTIVEX EVT_ACTIVEX_MOZILLA_NEWWINDOW2 EVT_ACTIVEX_MOZILLA_STATUSTEXTCHANGE) ;
   ... or ...
-  use Wx::ActiveX::IE qw(:iexplorer) ;
+  use Wx::ActiveX::Mozilla qw(:mozilla) ;
   
 You can use a common event table for both Mozilla and IE
 
   use Wx::ActiveX::Browser qw(:browser);
 
-Here is the event table for Wx::ActiveX::IE:
+Here is the event table for Wx::ActiveX::Mozilla:
 
-    EVT_ACTIVEX_IE_STATUSTEXTCHANGE($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_DOWNLOADCOMPLETE($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_COMMANDSTATECHANGE($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_DOWNLOADBEGIN($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_PROGRESSCHANGE($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_PROPERTYCHANGE($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_TITLECHANGE($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_PRINTTEMPLATEINSTANTIATION($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_PRINTTEMPLATETEARDOWN($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_UPDATEPAGESTATUS($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_BEFORENAVIGATE2($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_NEWWINDOW2($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_NAVIGATECOMPLETE2($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_ONQUIT($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_ONVISIBLE($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_ONTOOLBAR($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_ONMENUBAR($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_ONSTATUSBAR($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_ONFULLSCREEN($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_DOCUMENTCOMPLETE($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_ONTHEATERMODE($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_WINDOWSETRESIZABLE($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_WINDOWCLOSING($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_WINDOWSETLEFT($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_WINDOWSETTOP($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_WINDOWSETWIDTH($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_WINDOWSETHEIGHT($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_CLIENTTOHOSTWINDOW($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_SETSECURELOCKICON($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_FILEDOWNLOAD($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_NAVIGATEERROR($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_PRIVACYIMPACTEDSTATECHANGE($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_NEWWINDOW3($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_SETPHISHINGFILTERSTATUS($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_IE_WINDOWSTATECHANGED($handler, $axcontrol, \&event_sub);
+    EVT_ACTIVEX_MOZILLA_STATUSTEXTCHANGE($handler, $axcontrol, \&event_sub);
+    EVT_ACTIVEX_MOZILLA_DOWNLOADCOMPLETE($handler, $axcontrol, \&event_sub);
+    EVT_ACTIVEX_MOZILLA_COMMANDSTATECHANGE($handler, $axcontrol, \&event_sub);
+    EVT_ACTIVEX_MOZILLA_DOWNLOADBEGIN($handler, $axcontrol, \&event_sub);
+    EVT_ACTIVEX_MOZILLA_PROGRESSCHANGE($handler, $axcontrol, \&event_sub);
+    EVT_ACTIVEX_MOZILLA_PROPERTYCHANGE($handler, $axcontrol, \&event_sub);
+    EVT_ACTIVEX_MOZILLA_TITLECHANGE($handler, $axcontrol, \&event_sub);
+    EVT_ACTIVEX_MOZILLA_BEFORENAVIGATE2($handler, $axcontrol, \&event_sub);
+    EVT_ACTIVEX_MOZILLA_NEWWINDOW2($handler, $axcontrol, \&event_sub);
+    EVT_ACTIVEX_MOZILLA_NAVIGATECOMPLETE2($handler, $axcontrol, \&event_sub);
+    EVT_ACTIVEX_MOZILLA_ONQUIT($handler, $axcontrol, \&event_sub);
+    EVT_ACTIVEX_MOZILLA_ONVISIBLE($handler, $axcontrol, \&event_sub);
+    EVT_ACTIVEX_MOZILLA_ONTOOLBAR($handler, $axcontrol, \&event_sub);
+    EVT_ACTIVEX_MOZILLA_ONMENUBAR($handler, $axcontrol, \&event_sub);
+    EVT_ACTIVEX_MOZILLA_ONSTATUSBAR($handler, $axcontrol, \&event_sub);
+    EVT_ACTIVEX_MOZILLA_ONFULLSCREEN($handler, $axcontrol, \&event_sub);
+    EVT_ACTIVEX_MOZILLA_DOCUMENTCOMPLETE($handler, $axcontrol, \&event_sub);
+    EVT_ACTIVEX_MOZILLA_ONTHEATERMODE($handler, $axcontrol, \&event_sub);
     
 Here is the event table for Wx::ActiveX::Browser:
 
@@ -267,7 +253,7 @@ Here is the event table for Wx::ActiveX::Browser:
     EVT_ACTIVEX_BROWSER_ONSTATUSBAR($handler, $axcontrol, \&event_sub);
     EVT_ACTIVEX_BROWSER_ONFULLSCREEN($handler, $axcontrol, \&event_sub);
     EVT_ACTIVEX_BROWSER_DOCUMENTCOMPLETE($handler, $axcontrol, \&event_sub);
-    EVT_ACTIVEX_BROWSER_ONTHEATERMODE($handler, $axcontrol, \&event_sub);      
+    EVT_ACTIVEX_BROWSER_ONTHEATERMODE($handler, $axcontrol, \&event_sub);    
 
 =head1 DISPATCH METHODS
 
@@ -276,7 +262,6 @@ Here is the event table for Wx::ActiveX::Browser:
     or
     
     $obj->Invoke( 'MethodName', @args );
-
 
     AddRef()
     ClientToWindow(pcx , pcy)
@@ -300,7 +285,7 @@ Here is the event table for Wx::ActiveX::Browser:
     Refresh2(Level)
     Release()
     ShowBrowserBar(pvaClsid , pvarShow , pvarSize)
-    Stop()
+    Stop()   
 
 =head1 PROPERTIES
 
@@ -345,9 +330,6 @@ Here is the event table for Wx::ActiveX::Browser:
     ProgressChange
     PropertyChange
     TitleChange
-    PrintTemplateInstantiation
-    PrintTemplateTeardown
-    UpdatePageStatus
     BeforeNavigate2
     NewWindow2
     NavigateComplete2
@@ -359,49 +341,25 @@ Here is the event table for Wx::ActiveX::Browser:
     OnFullScreen
     DocumentComplete
     OnTheaterMode
-    WindowSetResizable
-    WindowClosing
-    WindowSetLeft
-    WindowSetTop
-    WindowSetWidth
-    WindowSetHeight
-    ClientToHostWindow
-    SetSecureLockIcon
-    FileDownload
-    NavigateError
-    PrivacyImpactedStateChange
-    NewWindow3
-    SetPhishingFilterStatus
-    WindowStateChanged
-
-=head1 NOTE
-
-This package only works for Win32, since it use AtiveX.
 
 =head1 SEE ALSO
 
 L<Wx::ActiveX> L<Wx>
-L<Wx::ActiveX::Mozilla> L<Wx>
+L<Wx::ActiveX::IE> L<Wx>
 
 =head1 AUTHOR
 
-Graciliano M. P. <gm@virtuasites.com.br>
+Mark Dootson <mdootson@cpan.org>
 
-Thanks to wxWindows people and Mattia Barbon for wxPerl! :P
-
-Thanks to Justin Bradford <justin@maxwell.ucsf.edu> and Lindsay Mathieson <lmathieson@optusnet.com.au>, that wrote the original C++ classes for wxActiveX and wxIEHtmlWin.
+This is a virtual copy of Wx::ActiveX::IE so thanks to all who
+contribute that module.
 
 =head1 COPYRIGHT
 
 This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
-=head1 CURRENT MAINTAINER
-
-Mark Dootson <mdootson@cpan.org> 
-
 =cut
 
-# Local variables: #
-# mode: cperl #
-# End: #
+
+#

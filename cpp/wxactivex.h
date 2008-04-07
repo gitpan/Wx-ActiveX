@@ -1,6 +1,58 @@
-/*! \file wxactivex.h 
-    \brief implements wxActiveX window class and OLE tools
-*/ 
+
+/* SVN-ID: $Id: wxactivex.h 2347 2008-04-03 12:33:11Z mdootson $ */
+/*
+                wxActiveX Library Licence, Version 3
+                ====================================
+
+  Copyright (C) 2003 Lindsay Mathieson [, ...]
+
+  Everyone is permitted to copy and distribute verbatim copies
+  of this licence document, but changing it is not allowed.
+
+                       wxActiveX LIBRARY LICENCE
+     TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+  
+  This library is free software; you can redistribute it and/or modify it
+  under the terms of the GNU Library General Public Licence as published by
+  the Free Software Foundation; either version 2 of the Licence, or (at
+  your option) any later version.
+  
+  This library is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library
+  General Public Licence for more details.
+
+  You should have received a copy of the GNU Library General Public Licence
+  along with this software, usually in a file named COPYING.LIB.  If not,
+  write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+  Boston, MA 02111-1307 USA.
+
+  EXCEPTION NOTICE
+
+  1. As a special exception, the copyright holders of this library give
+  permission for additional uses of the text contained in this release of
+  the library as licenced under the wxActiveX Library Licence, applying
+  either version 3 of the Licence, or (at your option) any later version of
+  the Licence as published by the copyright holders of version 3 of the
+  Licence document.
+
+  2. The exception is that you may use, copy, link, modify and distribute
+  under the user's own terms, binary object code versions of works based
+  on the Library.
+
+  3. If you copy code from files distributed under the terms of the GNU
+  General Public Licence or the GNU Library General Public Licence into a
+  copy of this library, as this licence permits, the exception does not
+  apply to the code that you add in this way.  To avoid misleading anyone as
+  to the status of such modified files, you must delete this exception
+  notice from such code and/or adjust the licensing conditions notice
+  accordingly.
+
+  4. If you write modifications of your own for this library, it is your
+  choice whether to permit this exception to apply to your modifications. 
+  If you do not wish that, you must delete the exception notice from such
+  code and/or adjust the licensing conditions notice accordingly.
+*/
 
 #ifndef WX_ACTIVE_X
 #define WX_ACTIVE_X
@@ -57,12 +109,12 @@ template <class I> class wxAutoOleInterface
 	/// Assumed to already have a AddRef() applied
     explicit wxAutoOleInterface(I *pInterface = NULL) : m_interface(pInterface) {}
 
-	/// queries for an interface 
+	/// queries for an interface
     wxAutoOleInterface(REFIID riid, IUnknown *pUnk) : m_interface(NULL)
 	{
 		QueryInterface(riid, pUnk);
 	};
-	/// queries for an interface 
+	/// queries for an interface
     wxAutoOleInterface(REFIID riid, IDispatch *pDispatch) : m_interface(NULL)
 	{
 		QueryInterface(riid, pDispatch);
@@ -114,7 +166,7 @@ template <class I> class wxAutoOleInterface
         m_interface = NULL;
     };
 
-	/// queries for an interface 
+	/// queries for an interface
     HRESULT QueryInterface(REFIID riid, IUnknown *pUnk)
 	{
 		Free();
@@ -149,33 +201,11 @@ wxString OLEHResultToString(HRESULT hr);
 /// Hardcoded, by no means a definitive list.
 wxString GetIIDName(REFIID riid);
 
-//#define __WXOLEDEBUG
 
+#define WXOLE_TRACE(str)
+#define WXOLE_TRACEOUT(stuff)
+#define WXOLE_WARN(_proc,msg) {_proc;}
 
-#ifdef __WXOLEDEBUG
-    #define WXOLE_TRACE(str) {OutputDebugString(str);OutputDebugString("\r\n");}
-    #define WXOLE_TRACEOUT(stuff)\
-    {\
-        wxString os;\
-        os << stuff << "\r\n";\
-        WXOLE_TRACE(os.mb_str());\
-    }
-
-    #define WXOLE_WARN(__hr,msg)\
-    {\
-        if (__hr != S_OK)\
-        {\
-            wxString s = "*** ";\
-            s += msg;\
-            s += " : "+ OLEHResultToString(__hr);\
-            WXOLE_TRACE(s.c_str());\
-        }\
-    }
-#else
-    #define WXOLE_TRACE(str)
-    #define WXOLE_TRACEOUT(stuff)
-    #define WXOLE_WARN(_proc,msg) {_proc;}
-#endif
 
 /// Utility class for automatically initialising/freeing OLE.
 /// Just declare it statically somewhere in your program
@@ -298,18 +328,18 @@ class wxOleInit
 /// Main class for embedding a ActiveX control.
 /// Use by itself or derive from it
 /// \note The utility program (wxie) can generate a list of events, methods & properties
-/// for a control. 
-/// First display the control (File|Display), 
-/// then get the type info (ActiveX|Get Type Info) - these are copied to the clipboard. 
-/// Eventually this will be expanded to autogenerate 
+/// for a control.
+/// First display the control (File|Display),
+/// then get the type info (ActiveX|Get Type Info) - these are copied to the clipboard.
+/// Eventually this will be expanded to autogenerate
 /// wxWindows source files for a control with all methods etc encapsulated.
-/// \par Usage: 
+/// \par Usage:
 ///     construct using a ProgId or class id
 ///     \code new wxActiveX(parent, CLSID_WebBrowser, id, pos, size, style, name)\endcode
 ///     \code new wxActiveX(parent, "ShockwaveFlash.ShockwaveFlash", id, pos, size, style, name)\endcode
 /// \par Properties
 /// Properties can be set using \c SetProp() and set/retrieved using \c Prop()
-///         \code SetProp(name, wxVariant(x)) \endcode or 
+///         \code SetProp(name, wxVariant(x)) \endcode or
 ///         \code wxString Prop("<name>") = x\endcode
 ///         \code wxString result = Prop("<name>")\endcode
 ///         \code flash_ctl.Prop("movie") = "file:///movies/test.swf";\endcode
@@ -322,7 +352,7 @@ class wxOleInit
 /// wxVariant result = X->CallMethod("LoadMovie", args);\endcode
 /// \par events
 /// respond to events with the
-///         \c EVT_ACTIVEX(controlId, eventName, handler) & 
+///         \c EVT_ACTIVEX(controlId, eventName, handler) &
 ///         \c EVT_ACTIVEX_DISPID(controlId, eventDispId, handler) macros
 /// \code
 /// BEGIN_EVENT_TABLE(wxIEFrame, wxFrame)
@@ -337,10 +367,10 @@ class wxActiveX : public wxWindow {
 public:
     /// General parameter and return type infoformation for Events, Properties and Methods.
     /// refer to ELEMDESC, IDLDESC in MSDN
-    
+
 	IDispatch* GetOLEDispatch() { return m_Dispatch; };
-    
-	class ParamX 
+
+	class ParamX
 	{
 	public:
 		USHORT	    flags;
@@ -357,7 +387,7 @@ public:
 
     /// Type & Parameter info for Events and Methods.
     /// refer to FUNCDESC in MSDN
-    class FuncX 
+    class FuncX
     {
     public:
         wxString    name;
@@ -402,11 +432,11 @@ public:
     /// returns event description by index.
     /// throws exception for invalid index
     const FuncX& GetEventDesc(int idx) const;
-    
+
     wxString GetEventName(int idx) ;
     wxString GetPropName(int idx) ;
     wxString GetMethodName(int idx) ;
-    
+
     int GetMethodArgCount(int idx) ;
     wxString GetMethodArgName(int idx , int argx) ;
 
@@ -438,16 +468,16 @@ public:
     void SetProp(MEMBERID name, VARIANTARG& value);
     /// Set property using wxVariant by name.
     void SetProp(const wxString &name, const wxVariant &value);
-    
+
     class wxPropertySetter
     {
     public:
         wxActiveX *m_ctl;
         wxString m_propName;
 
-        wxPropertySetter(wxActiveX *ctl, wxString propName) : 
+        wxPropertySetter(wxActiveX *ctl, wxString propName) :
             m_ctl(ctl), m_propName(propName) {}
-        
+
         inline const wxPropertySetter& operator = (wxVariant v) const
         {
             m_ctl->SetProp(m_propName, v);
@@ -492,7 +522,7 @@ public:
     void *GetPropAsPointer(const wxString& name);
 
     // methods
-    // VARIANTARG form is passed straight to Invoke, 
+    // VARIANTARG form is passed straight to Invoke,
     // so args in *REVERSE* order
     VARIANT CallMethod(MEMBERID name, VARIANTARG args[], int argc);
     VARIANT CallMethod(wxString name, VARIANTARG args[] = NULL, int argc = -1);
@@ -588,12 +618,12 @@ public:
     int ParamCount() const;
     wxString ParamType(int idx);
     wxString ParamName(int idx);
-    
+
     wxString ParamVal(int idx);
     void ParamSetBool(int idx , bool val);
     void ParamSetInt(int idx , long val);
     void ParamSetString(int idx , wxString val);
-    
+
     wxVariant& operator[] (int idx);
     wxVariant& operator[] (wxString name);
 };

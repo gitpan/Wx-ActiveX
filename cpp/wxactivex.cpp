@@ -1,5 +1,62 @@
+
+/* SVN-ID:      $Id: wxactivex.cpp 2355 2008-04-07 07:03:52Z mdootson $ */
+
+/*
+                wxActiveX Library Licence, Version 3
+                ====================================
+
+  Copyright (C) 2003 Lindsay Mathieson [, ...]
+
+  Everyone is permitted to copy and distribute verbatim copies
+  of this licence document, but changing it is not allowed.
+
+                       wxActiveX LIBRARY LICENCE
+     TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+  
+  This library is free software; you can redistribute it and/or modify it
+  under the terms of the GNU Library General Public Licence as published by
+  the Free Software Foundation; either version 2 of the Licence, or (at
+  your option) any later version.
+  
+  This library is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library
+  General Public Licence for more details.
+
+  You should have received a copy of the GNU Library General Public Licence
+  along with this software, usually in a file named COPYING.LIB.  If not,
+  write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+  Boston, MA 02111-1307 USA.
+
+  EXCEPTION NOTICE
+
+  1. As a special exception, the copyright holders of this library give
+  permission for additional uses of the text contained in this release of
+  the library as licenced under the wxActiveX Library Licence, applying
+  either version 3 of the Licence, or (at your option) any later version of
+  the Licence as published by the copyright holders of version 3 of the
+  Licence document.
+
+  2. The exception is that you may use, copy, link, modify and distribute
+  under the user's own terms, binary object code versions of works based
+  on the Library.
+
+  3. If you copy code from files distributed under the terms of the GNU
+  General Public Licence or the GNU Library General Public Licence into a
+  copy of this library, as this licence permits, the exception does not
+  apply to the code that you add in this way.  To avoid misleading anyone as
+  to the status of such modified files, you must delete this exception
+  notice from such code and/or adjust the licensing conditions notice
+  accordingly.
+
+  4. If you write modifications of your own for this library, it is your
+  choice whether to permit this exception to apply to your modifications. 
+  If you do not wish that, you must delete the exception notice from such
+  code and/or adjust the licensing conditions notice accordingly.
+*/
+
 #include "wx/wxprec.h"
-#include "wxActiveX.h"
+#include "wxactivex.h"
 #include <wx/strconv.h>
 #include <wx/event.h>
 #include <wx/string.h>
@@ -21,19 +78,11 @@
 #include <sstream>
 using namespace std;
 
-// Depending on compilation mode, the wx headers may have undef'd
-// this, but in this case we need it so the virtual method in
-// FrameSite will match what is in oleidl.h.
-// #ifndef GetObject
-//     #ifdef _UNICODE
-//         #define GetObject GetObjectW
-//     #else
-//         #define GetObject GetObjectA
-//     #endif
-// #endif
-
+#define wxACTIVEX_CLSID_MOZILLA_BROWSER CLSID_MozillaBrowser
+#define wxACTIVEX_CLSID_WEB_BROWSER CLSID_WebBrowser
 
 //////////////////////////////////////////////////////////////////////
+
 BEGIN_EVENT_TABLE(wxActiveX, wxWindow)
     EVT_SIZE(wxActiveX::OnSize)
     EVT_PAINT(wxActiveX::OnPaint)
@@ -44,7 +93,7 @@ END_EVENT_TABLE()
 
 class wxActiveX;
 
-class FrameSite : 
+class FrameSite :
     public IOleClientSite,
     public IOleInPlaceSiteEx,
     public IOleInPlaceFrame,
@@ -71,7 +120,7 @@ public:
 	STDMETHODIMP RequestBorderSpace(LPCBORDERWIDTHS);
 	STDMETHODIMP SetBorderSpace(LPCBORDERWIDTHS);
 	STDMETHODIMP SetActiveObject(IOleInPlaceActiveObject*, LPCOLESTR);
-	
+
     //IOleInPlaceFrame
 	STDMETHODIMP InsertMenus(HMENU, LPOLEMENUGROUPWIDTHS);
 	STDMETHODIMP SetMenu(HMENU, HOLEMENU, HWND);
@@ -84,7 +133,7 @@ public:
 	STDMETHODIMP CanInPlaceActivate();
 	STDMETHODIMP OnInPlaceActivate();
 	STDMETHODIMP OnUIActivate();
-	STDMETHODIMP GetWindowContext(IOleInPlaceFrame**, IOleInPlaceUIWindow**, 
+	STDMETHODIMP GetWindowContext(IOleInPlaceFrame**, IOleInPlaceUIWindow**,
 		LPRECT, LPRECT, LPOLEINPLACEFRAMEINFO);
 	STDMETHODIMP Scroll(SIZE);
 	STDMETHODIMP OnUIDeactivate(BOOL);
@@ -130,7 +179,7 @@ public:
 	STDMETHODIMP GetObject(LPOLESTR, DWORD, IBindCtx*, REFIID, void**);
 	STDMETHODIMP GetObjectStorage(LPOLESTR, IBindCtx*, REFIID, void**);
 	STDMETHODIMP IsRunning(LPOLESTR);
-    
+
 	//IDispatch
 	STDMETHODIMP GetIDsOfNames(REFIID, OLECHAR**, unsigned int, LCID, DISPID*);
 	STDMETHODIMP GetTypeInfo(unsigned int, LCID, ITypeInfo**);
@@ -159,7 +208,7 @@ protected:
 	bool m_bInPlaceActive;
 	bool m_bUIActive;
 	bool m_bWindowless;
-    
+
 
 
 	LCID m_nAmbientLocale;
@@ -236,14 +285,14 @@ wxActiveX::~wxActiveX()
 	};
 	m_connections.clear();
 
-    if (m_oleInPlaceObject.Ok()) 
+    if (m_oleInPlaceObject.Ok())
 	{
 		m_oleInPlaceObject->InPlaceDeactivate();
 		m_oleInPlaceObject->UIDeactivate();
 	}
 
 
-	if (m_oleObject.Ok()) 
+	if (m_oleObject.Ok())
 	{
 	    if (m_docAdviseCookie != 0)
     		m_oleObject->Unadvise(m_docAdviseCookie);
@@ -266,35 +315,35 @@ wxString VarTypeAsString(VARTYPE vt)
 
     switch (vt)
     {
-    VT(VT_SAFEARRAY, "SafeArray");
-    VT(VT_EMPTY, "empty");
-    VT(VT_NULL, "null");
-    VT(VT_UI1, "byte");
-    VT(VT_I1, "char");
-    VT(VT_I2, "short");
-    VT(VT_I4, "long");
-    VT(VT_UI2, "unsigned short");
-    VT(VT_UI4, "unsigned long");
-    VT(VT_INT, "int");
-    VT(VT_UINT, "unsigned int");
-    VT(VT_R4, "real(4)");
-    VT(VT_R8, "real(8)");
-    VT(VT_CY, "Currency");
-    VT(VT_DATE, "wxDate");
-    VT(VT_BSTR, "wxString");
-    VT(VT_DISPATCH, "IDispatch");
-    VT(VT_ERROR, "SCode Error");
-    VT(VT_BOOL, "bool");
-    VT(VT_VARIANT, "wxVariant");
-    VT(VT_UNKNOWN, "IUknown");
-    VT(VT_VOID, "void");
-    VT(VT_PTR, "void *");
-    VT(VT_USERDEFINED, "*user defined*");
+    VT(VT_SAFEARRAY, wxT("SafeArray"));
+    VT(VT_EMPTY, wxT("empty"));
+    VT(VT_NULL, wxT("null"));
+    VT(VT_UI1, wxT("byte"));
+    VT(VT_I1, wxT("char"));
+    VT(VT_I2, wxT("short"));
+    VT(VT_I4, wxT("long"));
+    VT(VT_UI2, wxT("unsigned short"));
+    VT(VT_UI4, wxT("unsigned long"));
+    VT(VT_INT, wxT("int"));
+    VT(VT_UINT, wxT("unsigned int"));
+    VT(VT_R4, wxT("real(4)"));
+    VT(VT_R8, wxT("real(8)"));
+    VT(VT_CY, wxT("Currency"));
+    VT(VT_DATE, wxT("wxDate"));
+    VT(VT_BSTR, wxT("wxString"));
+    VT(VT_DISPATCH, wxT("IDispatch"));
+    VT(VT_ERROR, wxT("SCode Error"));
+    VT(VT_BOOL, wxT("bool"));
+    VT(VT_VARIANT, wxT("wxVariant"));
+    VT(VT_UNKNOWN, wxT("IUknown"));
+    VT(VT_VOID, wxT("void"));
+    VT(VT_PTR, wxT("void *"));
+    VT(VT_USERDEFINED, wxT("*user defined*"));
 
     default:
         {
             wxString s;
-            s << "Unknown(" << vt << ")";
+            s << wxT("Unknown(") << vt << wxT(")");
             return s;
         };
     };
@@ -304,12 +353,12 @@ wxString VarTypeAsString(VARTYPE vt)
 
 void wxActiveX::CreateActiveX(REFCLSID clsid)
 {
-	SetTransparent();
+    //SetTransparent();
 
 	HRESULT hret;
 
     ////////////////////////////////////////////////////////
-	// FrameSite
+    // FrameSite
     FrameSite *frame = new FrameSite(this);
     // oleClientSite
     hret = m_clientSite.QueryInterface(IID_IOleClientSite, (IDispatch *) frame);
@@ -324,18 +373,18 @@ void wxActiveX::CreateActiveX(REFCLSID clsid)
 	wxASSERT(m_ActiveX.Ok());
 
 	// Get Dispatch interface
-	hret = m_Dispatch.QueryInterface(IID_IDispatch, m_ActiveX); 
+	hret = m_Dispatch.QueryInterface(IID_IDispatch, m_ActiveX);
 	WXOLE_WARN(hret, "Unable to get dispatch interface");
 
 	// Type Info
 	GetTypeInfo();
 
 	// Get IOleObject interface
-	hret = m_oleObject.QueryInterface(IID_IOleObject, m_ActiveX); 
+	hret = m_oleObject.QueryInterface(IID_IOleObject, m_ActiveX);
 	wxASSERT(SUCCEEDED(hret));
 
     // get IViewObject Interface
-    hret = m_viewObject.QueryInterface(IID_IViewObject, m_ActiveX); 
+    hret = m_viewObject.QueryInterface(IID_IViewObject, m_ActiveX);
 	wxASSERT(SUCCEEDED(hret));
 
     // document advise
@@ -568,9 +617,9 @@ bool DATEToWxDateTime(DATE date, wxDateTime& dt)
         return false;
 
     dt = wxDateTime(
-        st.wDay, 
-        wxDateTime::Month(int(wxDateTime::Jan) + st.wMonth - 1), 
-        st.wYear, 
+        st.wDay,
+        wxDateTime::Month(int(wxDateTime::Jan) + st.wMonth - 1),
+        st.wYear,
         st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
 
 	return true;
@@ -618,9 +667,9 @@ bool MSWVariantToVariant(VARIANTARG& va, wxVariant& vx)
 	case VT_I1:
 	case VT_UI1:
 		if (byRef)
-			vx = (char) *va.pbVal;
+            vx = (wxChar) *va.pbVal;
 		else
-			vx = (char) va.bVal;
+            vx = (wxChar) va.bVal;
 		return true;
 
 	// 2 byte shorts
@@ -643,7 +692,7 @@ bool MSWVariantToVariant(VARIANTARG& va, wxVariant& vx)
 		else
 	        vx = (long) va.ulVal;
         return true;
-    
+
 
 	// 4 byte floats
 	case VT_R4:
@@ -753,9 +802,9 @@ bool VariantToMSWVariant(const wxVariant& vx, VARIANTARG& va)
 	case VT_I1:
 	case VT_UI1:
 		if (byRef)
-			*va.pbVal = (char) vx;
+            *va.pbVal = (wxChar) vx;
 		else
-			va.bVal = (char) vx;
+            va.bVal = (wxChar) vx;
 		return true;
 
 	// 2 byte shorts
@@ -778,7 +827,7 @@ bool VariantToMSWVariant(const wxVariant& vx, VARIANTARG& va)
 		else
 	        va.ulVal = (long) vx;
         return true;
-    
+
 
 	// 4 byte floats
 	case VT_R4:
@@ -859,23 +908,23 @@ private:
 public:
     wxActiveXEvents(wxActiveX *ax) : m_activeX(ax), m_haveCustomId(false) {}
 	wxActiveXEvents(wxActiveX *ax, REFIID iid) : m_activeX(ax), m_haveCustomId(true), m_customId(iid) {}
-	virtual ~wxActiveXEvents() 
+	virtual ~wxActiveXEvents()
     {
     }
 
 	//IDispatch
 	STDMETHODIMP GetIDsOfNames(REFIID r, OLECHAR** o, unsigned int i, LCID l, DISPID* d)
-	{ 
+	{
         return E_NOTIMPL;
     };
 
 	STDMETHODIMP GetTypeInfo(unsigned int i, LCID l, ITypeInfo** t)
-	{ 
+	{
         return E_NOTIMPL;
     };
 
 	STDMETHODIMP GetTypeInfoCount(unsigned int* i)
-	{ 
+	{
         return E_NOTIMPL;
     };
 
@@ -918,7 +967,7 @@ public:
 				if (px.IsOut())
 				{
 					wxVariant& vx = event.m_params[nArg - i - 1];
-					
+
 					VariantToMSWVariant(vx, va);
 				};
 			};
@@ -932,13 +981,13 @@ public:
 						  WORD wFlags, DISPPARAMS * pDispParams,
 						  VARIANT * pVarResult, EXCEPINFO * pExcepInfo,
 						  unsigned int * puArgErr)
-	{ 
+	{
 	    if (wFlags & (DISPATCH_PROPERTYGET | DISPATCH_PROPERTYPUT | DISPATCH_PROPERTYPUTREF))
             return E_NOTIMPL;
 
         wxASSERT(m_activeX);
 
-        // find event for dispid 
+        // find event for dispid
 		wxActiveX::FuncXMap::iterator mit = m_activeX->m_events.find((MEMBERID) dispIdMember);
         if (mit == m_activeX->m_events.end())
             return S_OK;
@@ -1021,7 +1070,7 @@ void wxActiveXEvent::ParamSetBool(int idx , bool val)
     wxASSERT(idx >= 0 && idx < m_params.GetCount());
     m_params[idx] = val ;
 };
-    
+
 void wxActiveXEvent::ParamSetInt(int idx , long val)
 {
     wxASSERT(idx >= 0 && idx < m_params.GetCount());
@@ -1052,12 +1101,12 @@ wxVariant& wxActiveXEvent::operator[] (wxString name)
             return m_params[i];
     };
 
-    wxString err = "wxActiveXEvent::operator[] invalid name <" + name + ">";
-    err += "\r\nValid Names = :\r\n";
+    wxString err = wxT("wxActiveXEvent::operator[] invalid name <") + name + wxT(">");
+    err += wxT("\r\nValid Names = :\r\n");
     for (i = 0; i < m_params.GetCount(); i++)
     {
         err += m_params[i].GetName();
-        err += "\r\n";
+        err += wxT("\r\n");
     };
 
     wxASSERT_MSG(false, err);
@@ -1068,15 +1117,15 @@ wxVariant& wxActiveXEvent::operator[] (wxString name)
 void wxActiveX::GetTypeInfo()
 {
 	/*
-	We are currently only interested in the IDispatch interface 
+	We are currently only interested in the IDispatch interface
 	to the control. For dual interfaces (TypeKind = TKIND_INTERFACE)
-	we should drill down through the inheritance 
+	we should drill down through the inheritance
 	(using TYPEATTR->cImplTypes) and GetRefTypeOfImplType(n)
-	and retrieve all the func names etc that way, then generate a C++ 
+	and retrieve all the func names etc that way, then generate a C++
 	header	file for it.
 
-	But we don't do this and probably never will, so if we have a DUAL 
-	interface then we query for the IDispatch 
+	But we don't do this and probably never will, so if we have a DUAL
+	interface then we query for the IDispatch
 	via GetRefTypeOfImplType(-1).
 	*/
 
@@ -1177,7 +1226,12 @@ void wxActiveX::GetTypeInfo(ITypeInfo *ti, bool defInterface, bool defEventSink)
 
 	if (ta->typekind == TKIND_DISPATCH)
 	{
+
+#ifdef __WXOLEDEBUG
+
         WXOLE_TRACEOUT("GUID = " << GetIIDName(ta->guid).c_str());
+
+#endif
 
         if (defEventSink)
         {
@@ -1262,9 +1316,9 @@ void wxActiveX::GetTypeInfo(ITypeInfo *ti, bool defInterface, bool defEventSink)
 								it = m_props.insert(PropXMap::value_type(func.name, PropX())).first;
                                 it->second.name = func.name;
                                 it->second.memid = func.memid;
-                                
+
                             };
-							
+
 							if (fd->invkind == INVOKE_PROPERTYGET)
 								it->second.type = func.retType;
 							else if (func.params.size() > 0)
@@ -1286,7 +1340,7 @@ void wxActiveX::GetTypeInfo(ITypeInfo *ti, bool defInterface, bool defEventSink)
 
 wxString wxActiveX::GetEventName(int idx) {
      if (idx < 0 || idx >= this->GetEventCount() ) {
-       wxString tmp = "" ;
+       wxString tmp = wxT("") ;
        return( tmp ) ;
      }
      const wxActiveX::FuncX& func = this->GetEventDesc(idx);
@@ -1295,17 +1349,17 @@ wxString wxActiveX::GetEventName(int idx) {
 
 wxString wxActiveX::GetPropName(int idx) {
      if (idx < 0 || idx >= this->GetPropCount() ) {
-       wxString tmp = "" ;
+       wxString tmp = wxT("") ;
        return( tmp ) ;
      }
-     
+
      const wxActiveX::PropX prop = this->GetPropDesc(idx);
      return( prop.name ) ;
 }
 
 wxString wxActiveX::GetMethodName(int idx) {
      if (idx < 0 || idx >= this->GetMethodCount() ) {
-       wxString tmp = "" ;
+       wxString tmp = wxT("") ;
        return( tmp ) ;
      }
      const wxActiveX::FuncX& func = this->GetMethodDesc(idx);
@@ -1331,7 +1385,7 @@ int wxActiveX::GetMethodArgCount(int idx) {
 
 wxString wxActiveX::GetMethodArgName(int idx , int argx) {
      if (idx < 0 || idx >= this->GetMethodCount() ) {
-       wxString tmp = "" ;
+       wxString tmp = wxT("") ;
        return( tmp ) ;
      }
      const wxActiveX::FuncX& func = this->GetMethodDesc(idx);
@@ -1374,7 +1428,7 @@ const wxActiveX::PropX& wxActiveX::GetPropDesc(wxString name) const
     if (it == m_props.end())
     {
         wxString s;
-        s << "property <" << name << "> not found";
+        s << wxT("property <") << name << wxT("> not found");
         croak(s.mb_str());
     };
 
@@ -1403,7 +1457,7 @@ const wxActiveX::FuncX& wxActiveX::GetMethodDesc(wxString name) const
     if (it == m_methods.end())
     {
         wxString s;
-        s << "method <" << name << "> not found";
+        s << wxT("method <") << name << wxT("> not found");
         croak(s.mb_str());
     };
 
@@ -1421,7 +1475,7 @@ void wxActiveX::SetProp(MEMBERID name, VARIANTARG& value)
     unsigned int argErr = 0;
 
 	HRESULT hr = m_Dispatch->Invoke(
-		name, 
+		name,
 		IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYPUT,
 		&params, NULL, &x, &argErr);
 
@@ -1434,7 +1488,7 @@ void wxActiveX::SetProp(const wxString &name, const wxVariant &value)
     if (! prop.CanSet())
     {
         wxString s;
-        s << "property <" << name << "> is readonly";
+        s << wxT("property <") << name << wxT("> is readonly");
         croak(s.mb_str());
     };
 
@@ -1456,7 +1510,7 @@ VARIANT wxActiveX::GetPropAsVariant(MEMBERID name)
     unsigned int argErr = 0;
 
 	HRESULT hr = m_Dispatch->Invoke(
-		name, 
+		name,
 		IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET,
 		&params, &v, &x, &argErr);
 
@@ -1471,13 +1525,13 @@ VARIANT wxActiveX::GetPropAsVariant(const wxString& name)
     if (! prop.CanGet())
     {
         wxString s;
-        s << "property <" << name << "> is writeonly";
+        s << wxT("property <") << name << wxT("> is writeonly");
 		croak(s.mb_str());
     };
 
     return GetPropAsVariant(prop.memid);
 };
-    
+
 wxVariant wxActiveX::GetPropAsWxVariant(const wxString& name)
 {
     VARIANT v = GetPropAsVariant(name);
@@ -1576,7 +1630,7 @@ void wxActiveX::PropSetBool(wxString name , bool val)
 {
     SetProp(name, val) ;
 };
-    
+
 void wxActiveX::PropSetInt(wxString name , long val)
 {
     SetProp(name, val) ;
@@ -1600,7 +1654,7 @@ VARIANT wxActiveX::CallMethod(MEMBERID name, VARIANTARG args[], int argc)
     unsigned int argErr = 0;
 
 	HRESULT hr = m_Dispatch->Invoke(
-		name, 
+		name,
 		IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD,
 		&pargs, &retVal, &x, &argErr);
 
@@ -1731,11 +1785,11 @@ HRESULT wxActiveX::ConnectAdvise(REFIID riid, IUnknown *events)
 	wxAutoOleInterface<IConnectionPointContainer> cpContainer(IID_IConnectionPointContainer, m_ActiveX);
 	if (! cpContainer.Ok())
 		return E_FAIL;
-	
+
 	HRESULT hret = cpContainer->FindConnectionPoint(riid, cp.GetRef());
 	if (! SUCCEEDED(hret))
 		return hret;
-	
+
 	hret = cp->Advise(events, &adviseCookie);
 
 	if (SUCCEEDED(hret))
@@ -1813,15 +1867,14 @@ void wxActiveX::OnSize(wxSizeEvent& event)
             m_oleObject->SetExtent(DVASPECT_CONTENT, &sz);
     };
 
-    if (m_oleInPlaceObject.Ok()) 
+    if (m_oleInPlaceObject.Ok())
 		m_oleInPlaceObject->SetObjectRects(&posRect, &posRect);
 }
 
 void wxActiveX::OnPaint(wxPaintEvent& event)
 {
-	wxLogTrace(wxT("repainting activex win"));
+    wxLogTrace('%s', wxT("repainting activex win"));
 	wxPaintDC dc(this);
-	dc.BeginDrawing();
 	int w, h;
 	GetSize(&w, &h);
 	RECT posRect;
@@ -1836,7 +1889,7 @@ void wxActiveX::OnPaint(wxPaintEvent& event)
 		::RedrawWindow(m_oleObjectHWND, NULL, NULL, RDW_INTERNALPAINT);
 		{
 			RECTL *prcBounds = (RECTL *) &posRect;
-			m_viewObject->Draw(DVASPECT_CONTENT, -1, NULL, NULL, NULL, 
+			m_viewObject->Draw(DVASPECT_CONTENT, -1, NULL, NULL, NULL,
 				(HDC)dc.GetHDC(), prcBounds, NULL, NULL, 0);
 		}
 	}
@@ -1846,74 +1899,72 @@ void wxActiveX::OnPaint(wxPaintEvent& event)
 		dc.DrawRectangle(0, 0, w, h);
 		dc.SetBrush(wxNullBrush);
 	}
-	dc.EndDrawing();
+    // dc.EndDrawing();  // deprecated
 }
 
 
 void wxActiveX::OnMouse(wxMouseEvent& event)
 {
-	if (m_oleObjectHWND == NULL) 
-    { 
-        wxLogTrace(wxT("no oleInPlaceObject")); 
-        event.Skip(); 
-        return; 
+	if (m_oleObjectHWND == NULL)
+    {
+        wxLogTrace('%s', wxT("no oleInPlaceObject"));
+        event.Skip();
+        return;
     }
-
-	wxLogTrace(wxT("mouse event"));
+    wxLogTrace('%s', wxT("mouse event"));
 	UINT msg = 0;
 	WPARAM wParam = 0;
 	LPARAM lParam = 0;
 	LRESULT lResult = 0;
 
-	if (event.m_metaDown) 
+	if (event.m_metaDown)
         wParam |= MK_CONTROL;
-	if (event.m_shiftDown) 
+	if (event.m_shiftDown)
         wParam |= MK_SHIFT;
-	if (event.m_leftDown) 
+	if (event.m_leftDown)
         wParam |= MK_LBUTTON;
-	if (event.m_middleDown) 
+	if (event.m_middleDown)
         wParam |= MK_MBUTTON;
-	if (event.m_rightDown) 
+	if (event.m_rightDown)
         wParam |= MK_RBUTTON;
 	lParam = event.m_x << 16;
 	lParam |= event.m_y;
 
-	if (event.LeftDown()) 
+	if (event.LeftDown())
         msg = WM_LBUTTONDOWN;
-	else if (event.LeftDClick()) 
+	else if (event.LeftDClick())
         msg = WM_LBUTTONDBLCLK;
-	else if (event.LeftUp()) 
+	else if (event.LeftUp())
         msg = WM_LBUTTONUP;
-	else if (event.MiddleDown()) 
+	else if (event.MiddleDown())
         msg = WM_MBUTTONDOWN;
-	else if (event.MiddleDClick()) 
+	else if (event.MiddleDClick())
         msg = WM_MBUTTONDBLCLK;
-	else if (event.MiddleUp()) 
+	else if (event.MiddleUp())
         msg = WM_MBUTTONUP;
-	else if (event.RightDown()) 
+	else if (event.RightDown())
         msg = WM_RBUTTONDOWN;
-	else if (event.RightDClick()) 
+	else if (event.RightDClick())
         msg = WM_RBUTTONDBLCLK;
-	else if (event.RightUp()) 
+	else if (event.RightUp())
         msg = WM_RBUTTONUP;
-	else if (event.Moving() || event.Dragging()) 
+	else if (event.Moving() || event.Dragging())
         msg = WM_MOUSEMOVE;
 
 	wxString log;
-	if (msg == 0) 
-    { 
-        wxLogTrace(wxT("no message"));
-        event.Skip(); return; 
+	if (msg == 0)
+    {
+        wxLogTrace('%s', wxT("no message"));
+        event.Skip(); return;
     };
 
-	if (!::SendMessage(m_oleObjectHWND, msg, wParam, lParam)) 
-    { 
-        wxLogTrace(wxT("msg not delivered"));
-        event.Skip(); 
-        return; 
+	if (!::SendMessage(m_oleObjectHWND, msg, wParam, lParam))
+    {
+        event.Skip();
+        wxLogTrace('%s', wxT("msg not delivered"));
+        return;
     };
-
-	wxLogTrace(wxT("msg sent"));
+    wxLogTrace('%s', wxT("msg sent"));
 }
 
 long wxActiveX::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam)
@@ -1940,13 +1991,13 @@ long wxActiveX::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam)
 
 void wxActiveX::OnSetFocus(wxFocusEvent& event)
 {
-	if (m_oleInPlaceActiveObject.Ok()) 
+	if (m_oleInPlaceActiveObject.Ok())
         m_oleInPlaceActiveObject->OnFrameWindowActivate(TRUE);
 }
 
 void wxActiveX::OnKillFocus(wxFocusEvent& event)
 {
-	if (m_oleInPlaceActiveObject.Ok()) 
+	if (m_oleInPlaceActiveObject.Ok())
         m_oleInPlaceActiveObject->OnFrameWindowActivate(FALSE);
 }
 
@@ -1966,7 +2017,7 @@ FrameSite::FrameSite(wxActiveX * win)
 	m_bAmbientShowHatching = true;
 	m_bAmbientShowGrabHandles = true;
 	m_bAmbientAppearance = true;
- 
+
 	m_hDCBuffer = NULL;
 	m_hWndParent = (HWND)m_window->GetHWND();
 }
@@ -2009,7 +2060,7 @@ HRESULT FrameSite::Invoke(DISPID dispIdMember, REFIID riid, LCID lcid,
 
     HRESULT hr;
 
-	if (pVarResult == NULL) 
+	if (pVarResult == NULL)
 		return E_INVALIDARG;
 
     //The most common case is boolean, use as an initial type
@@ -2085,7 +2136,7 @@ HRESULT FrameSite::Invoke(DISPID dispIdMember, REFIID riid, LCID lcid,
 HRESULT FrameSite::GetWindow(HWND * phwnd)
 {
 	WXOLE_TRACE("IOleWindow::GetWindow");
-	if (phwnd == NULL) 
+	if (phwnd == NULL)
         return E_INVALIDARG;
 	(*phwnd) = m_hWndParent;
 	return S_OK;
@@ -2102,7 +2153,7 @@ HRESULT FrameSite::ContextSensitiveHelp(BOOL fEnterMode)
 HRESULT FrameSite::GetBorder(LPRECT lprectBorder)
 {
 	WXOLE_TRACE("IOleInPlaceUIWindow::GetBorder");
-	if (lprectBorder == NULL) 
+	if (lprectBorder == NULL)
         return E_INVALIDARG;
 	return INPLACE_E_NOTOOLSPACE;
 }
@@ -2110,7 +2161,7 @@ HRESULT FrameSite::GetBorder(LPRECT lprectBorder)
 HRESULT FrameSite::RequestBorderSpace(LPCBORDERWIDTHS pborderwidths)
 {
 	WXOLE_TRACE("IOleInPlaceUIWindow::RequestBorderSpace");
-	if (pborderwidths == NULL) 
+	if (pborderwidths == NULL)
         return E_INVALIDARG;
 	return INPLACE_E_NOTOOLSPACE;
 }
@@ -2207,9 +2258,9 @@ HRESULT FrameSite::GetWindowContext(IOleInPlaceFrame **ppFrame,
 	if (ppFrame == NULL || ppDoc == NULL || lprcPosRect == NULL ||
 		lprcClipRect == NULL || lpFrameInfo == NULL)
 	{
-		if (ppFrame != NULL) 
+		if (ppFrame != NULL)
             (*ppFrame) = NULL;
-		if (ppDoc != NULL) 
+		if (ppDoc != NULL)
             (*ppDoc) = NULL;
 		return E_INVALIDARG;
 	}
@@ -2299,7 +2350,7 @@ HRESULT FrameSite::OnInPlaceActivateEx(BOOL * pfNoRedraw, DWORD dwFlags)
 {
 	WXOLE_TRACE("IOleInPlaceSiteEx::OnInPlaceActivateEx");
 	OleLockRunning(m_window->m_ActiveX, TRUE, FALSE);
-    if (pfNoRedraw) 
+    if (pfNoRedraw)
         (*pfNoRedraw) = FALSE;
 	return S_OK;
 }
@@ -2333,7 +2384,7 @@ const char *OleGetMonikerToStr(DWORD dwAssign)
     case OLEGETMONIKER_ONLYIFTHERE  : return "OLEGETMONIKER_ONLYIFTHERE";
     case OLEGETMONIKER_FORCEASSIGN  : return "OLEGETMONIKER_FORCEASSIGN";
     case OLEGETMONIKER_UNASSIGN     : return "OLEGETMONIKER_UNASSIGN";
-    case OLEGETMONIKER_TEMPFORUSER  : return "OLEGETMONIKER_TEMPFORUSER";    
+    case OLEGETMONIKER_TEMPFORUSER  : return "OLEGETMONIKER_TEMPFORUSER";
     default                         : return "Bad Enum";
     };
 };
@@ -2364,16 +2415,16 @@ HRESULT FrameSite::GetMoniker(DWORD dwAssign, DWORD dwWhichMoniker,
         return S_OK;
     */
     *ppmk = NULL;
-    
+
 	return E_FAIL ;
 }
 
 HRESULT FrameSite::GetContainer(LPOLECONTAINER * ppContainer)
 {
 	WXOLE_TRACE("IOleClientSite::GetContainer");
-	if (ppContainer == NULL) 
+	if (ppContainer == NULL)
         return E_INVALIDARG;
-	
+
     HRESULT hr = QueryInterface(IID_IOleContainer, (void**)(ppContainer));
     wxASSERT(SUCCEEDED(hr));
 
@@ -2426,26 +2477,26 @@ HRESULT FrameSite::LockContainer(BOOL fLock)
 
 //IOleItemContainer
 
-HRESULT FrameSite::GetObject(LPOLESTR pszItem, DWORD dwSpeedNeeded, 
+HRESULT FrameSite::GetObject(LPOLESTR pszItem, DWORD dwSpeedNeeded,
 							 IBindCtx * pbc, REFIID riid, void ** ppvObject)
 {
 	WXOLE_TRACE("IOleItemContainer::GetObject");
-	if (pszItem == NULL) 
+	if (pszItem == NULL)
         return E_INVALIDARG;
-	if (ppvObject == NULL) 
+	if (ppvObject == NULL)
         return E_INVALIDARG;
 
 	*ppvObject = NULL;
 	return MK_E_NOOBJECT;
 }
 
-HRESULT FrameSite::GetObjectStorage(LPOLESTR pszItem, IBindCtx * pbc, 
+HRESULT FrameSite::GetObjectStorage(LPOLESTR pszItem, IBindCtx * pbc,
 									REFIID riid, void ** ppvStorage)
 {
 	WXOLE_TRACE("IOleItemContainer::GetObjectStorage");
-	if (pszItem == NULL) 
+	if (pszItem == NULL)
         return E_INVALIDARG;
-	if (ppvStorage == NULL) 
+	if (ppvStorage == NULL)
         return E_INVALIDARG;
 
 	*ppvStorage = NULL;
@@ -2455,7 +2506,7 @@ HRESULT FrameSite::GetObjectStorage(LPOLESTR pszItem, IBindCtx * pbc,
 HRESULT FrameSite::IsRunning(LPOLESTR pszItem)
 {
 	WXOLE_TRACE("IOleItemContainer::IsRunning");
-	if (pszItem == NULL) 
+	if (pszItem == NULL)
         return E_INVALIDARG;
 
 	return MK_E_NOOBJECT;
@@ -2520,7 +2571,7 @@ HRESULT FrameSite::ShowPropertyFrame()
 
 //IOleCommandTarget
 
-HRESULT FrameSite::QueryStatus(const GUID * pguidCmdGroup, ULONG cCmds, 
+HRESULT FrameSite::QueryStatus(const GUID * pguidCmdGroup, ULONG cCmds,
 							   OLECMD * prgCmds, OLECMDTEXT * pCmdTet)
 {
 	WXOLE_TRACE("IOleCommandTarget::QueryStatus");
@@ -2539,8 +2590,8 @@ HRESULT FrameSite::QueryStatus(const GUID * pguidCmdGroup, ULONG cCmds,
 	return S_OK;
 }
 
-HRESULT FrameSite::Exec(const GUID * pguidCmdGroup, DWORD nCmdID, 
-						DWORD nCmdExecOpt, VARIANTARG * pVaIn, 
+HRESULT FrameSite::Exec(const GUID * pguidCmdGroup, DWORD nCmdID,
+						DWORD nCmdExecOpt, VARIANTARG * pVaIn,
 						VARIANTARG * pVaOut)
 {
 	WXOLE_TRACE("IOleCommandTarget::Exec");
@@ -2640,7 +2691,7 @@ wxOleInit::~wxOleInit()
 
 bool GetSysErrMessage(int err, wxString& s)
 {
-	char buf[256];
+    wxChar buf[256];
 	if (FormatMessage(
 		FORMAT_MESSAGE_FROM_SYSTEM, NULL,
 		err,0, buf, sizeof(buf), NULL) == 0)
@@ -2661,206 +2712,72 @@ wxString OLEHResultToString(HRESULT hr)
     switch (hr)
     {
     case S_OK:
-    	return "";
+        return wxT("");
 
 	case CONNECT_E_CANNOTCONNECT:
-		return "Cannot connect to event interface (maybe not there ?) - see MSDN";
+        return wxT("Cannot connect to event interface (maybe not there ?) - see MSDN");
 
     case DISP_E_MEMBERNOTFOUND:
-        return "The requested member does not exist, or the call to Invoke tried to set the value of a read-only property.";
+        return wxT("The requested member does not exist, or the call to Invoke tried to set the value of a read-only property.");
 
     case DISP_E_BADVARTYPE:
-        return "One of the parameters in rgvarg is not a valid variant type.";
+        return wxT("One of the parameters in rgvarg is not a valid variant type.");
 
     case DISP_E_BADPARAMCOUNT:
-        return "The number of elements provided to DISPPARAMS is different from the number of parameters accepted by the method or property";
+        return wxT("The number of elements provided to DISPPARAMS is different from the number of parameters accepted by the method or property");
 
     case DISP_E_EXCEPTION:
-        return "The application needs to raise an exception. In this case, the structure passed in pExcepInfo should be filled in.";
+        return wxT("The application needs to raise an exception. In this case, the structure passed in pExcepInfo should be filled in.");
 
     case DISP_E_TYPEMISMATCH:
-        return "One or more of the parameters could not be coerced. The index within rgvarg of the first parameter with the incorrect type is returned in the puArgErr parameter.";
+        return wxT("One or more of the parameters could not be coerced. The index within rgvarg of the first parameter with the incorrect type is returned in the puArgErr parameter.");
 
     case DISP_E_PARAMNOTOPTIONAL:
-        return "A required parameter was omitted.";
+        return wxT("A required parameter was omitted.");
 
 	case DISP_E_PARAMNOTFOUND:
-		return "One of the parameter DISPIDs does not correspond to a parameter on the method. In this case, puArgErr should be set to the first parameter that contains the error.";
+        return wxT("One of the parameter DISPIDs does not correspond to a parameter on the method. In this case, puArgErr should be set to the first parameter that contains the error.");
 
     case OLECMDERR_E_UNKNOWNGROUP:
-		return "The pguidCmdGroup parameter is not NULL but does not specify a recognized command group.";
+        return wxT("The pguidCmdGroup parameter is not NULL but does not specify a recognized command group.");
 
     case OLECMDERR_E_NOTSUPPORTED:
-		return "The nCmdID parameter is not a valid command in the group identified by pguidCmdGroup.";
+        return wxT("The nCmdID parameter is not a valid command in the group identified by pguidCmdGroup.");
 
     case OLECMDERR_E_DISABLED:
-		return "The command identified by nCmdID is currently disabled and cannot be executed.";
+        return wxT("The command identified by nCmdID is currently disabled and cannot be executed.");
 
     case OLECMDERR_E_NOHELP:
-		return "The caller has asked for help on the command identified by nCmdID, but no help is available.";
+        return wxT("The caller has asked for help on the command identified by nCmdID, but no help is available.");
 
     case OLECMDERR_E_CANCELED:
-		return "The user canceled the execution of the command.";
+        return wxT("The user canceled the execution of the command.");
 
     case E_INVALIDARG:
-        return "E_INVALIDARG";
+        return wxT("E_INVALIDARG");
 
     case E_OUTOFMEMORY:
-        return "E_OUTOFMEMORY";
+        return wxT("E_OUTOFMEMORY");
 
     case E_NOINTERFACE:
-        return "E_NOINTERFACE";
+        return wxT("E_NOINTERFACE");
 
     case E_UNEXPECTED:
-        return "E_UNEXPECTED";
+        return wxT("E_UNEXPECTED");
 
     case STG_E_INVALIDFLAG:
-        return "STG_E_INVALIDFLAG";
+        return wxT("STG_E_INVALIDFLAG");
 
     case E_FAIL:
-        return "E_FAIL";
+        return wxT("E_FAIL");
 
     case E_NOTIMPL:
-        return "E_NOTIMPL";
+        return wxT("E_NOTIMPL");
 
     default:
         {
-            char buf[64];
-            sprintf(buf, "Unknown - 0x%X", hr);
-            return wxString(buf);
+            return wxString::Format(wxT("Unknown - 0x%X"), hr);
         }
     };
 };
-
-// borrowed from src/msw/ole/oleutils.cpp
-wxString GetIIDName(REFIID riid)
-{
-  // an association between symbolic name and numeric value of an IID
-  struct KNOWN_IID 
-  {
-    const IID  *pIid;
-    const wxChar *szName;
-  };
-
-  // construct the table containing all known interfaces
-  #define ADD_KNOWN_IID(name) { &IID_I##name, _T(#name) }
-  #define ADD_KNOWN_GUID(name) { &name, _T(#name) }
-
-  static const KNOWN_IID aKnownIids[] = 
-  {
-#ifdef _MSC_VER
-    ADD_KNOWN_IID(ServiceProvider),
-#endif
-    ADD_KNOWN_IID(AdviseSink),
-    ADD_KNOWN_IID(AdviseSink2),
-    ADD_KNOWN_IID(BindCtx),
-    ADD_KNOWN_IID(ClassFactory),
-#if ( !defined( __VISUALC__) || (__VISUALC__!=1010) ) && !defined(__MWERKS__)
-    ADD_KNOWN_IID(ContinueCallback),
-    ADD_KNOWN_IID(EnumOleDocumentViews),
-    ADD_KNOWN_IID(OleCommandTarget),
-    ADD_KNOWN_IID(OleDocument),
-    ADD_KNOWN_IID(OleDocumentSite),
-    ADD_KNOWN_IID(OleDocumentView),
-    ADD_KNOWN_IID(Print),
-#endif
-    ADD_KNOWN_IID(DataAdviseHolder),
-    ADD_KNOWN_IID(DataObject),
-    ADD_KNOWN_IID(Debug),
-    ADD_KNOWN_IID(DebugStream),
-    ADD_KNOWN_IID(DfReserved1),
-    ADD_KNOWN_IID(DfReserved2),
-    ADD_KNOWN_IID(DfReserved3),
-    ADD_KNOWN_IID(Dispatch),
-    ADD_KNOWN_IID(DropSource),
-    ADD_KNOWN_IID(DropTarget),
-    ADD_KNOWN_IID(EnumCallback),
-    ADD_KNOWN_IID(EnumFORMATETC),
-    ADD_KNOWN_IID(EnumGeneric),
-    ADD_KNOWN_IID(EnumHolder),
-    ADD_KNOWN_IID(EnumMoniker),
-    ADD_KNOWN_IID(EnumOLEVERB),
-    ADD_KNOWN_IID(EnumSTATDATA),
-    ADD_KNOWN_IID(EnumSTATSTG),
-    ADD_KNOWN_IID(EnumString),
-    ADD_KNOWN_IID(EnumUnknown),
-    ADD_KNOWN_IID(EnumVARIANT),
-    ADD_KNOWN_IID(ExternalConnection),
-    ADD_KNOWN_IID(InternalMoniker),
-    ADD_KNOWN_IID(LockBytes),
-    ADD_KNOWN_IID(Malloc),
-    ADD_KNOWN_IID(Marshal),
-    ADD_KNOWN_IID(MessageFilter),
-    ADD_KNOWN_IID(Moniker),
-    ADD_KNOWN_IID(OleAdviseHolder),
-    ADD_KNOWN_IID(OleCache),
-    ADD_KNOWN_IID(OleCache2),
-    ADD_KNOWN_IID(OleCacheControl),
-    ADD_KNOWN_IID(OleClientSite),
-    ADD_KNOWN_IID(OleContainer),
-    ADD_KNOWN_IID(OleInPlaceActiveObject),
-    ADD_KNOWN_IID(OleInPlaceFrame),
-    ADD_KNOWN_IID(OleInPlaceObject),
-    ADD_KNOWN_IID(OleInPlaceSite),
-    ADD_KNOWN_IID(OleInPlaceUIWindow),
-    ADD_KNOWN_IID(OleItemContainer),
-    ADD_KNOWN_IID(OleLink),
-    ADD_KNOWN_IID(OleManager),
-    ADD_KNOWN_IID(OleObject),
-    ADD_KNOWN_IID(OlePresObj),
-    ADD_KNOWN_IID(OleWindow),
-    ADD_KNOWN_IID(PSFactory),
-    ADD_KNOWN_IID(ParseDisplayName),
-    ADD_KNOWN_IID(Persist),
-    ADD_KNOWN_IID(PersistFile),
-    ADD_KNOWN_IID(PersistStorage),
-    ADD_KNOWN_IID(PersistStream),
-    ADD_KNOWN_IID(ProxyManager),
-    ADD_KNOWN_IID(RootStorage),
-    ADD_KNOWN_IID(RpcChannel),
-    ADD_KNOWN_IID(RpcProxy),
-    ADD_KNOWN_IID(RpcStub),
-    ADD_KNOWN_IID(RunnableObject),
-    ADD_KNOWN_IID(RunningObjectTable),
-    ADD_KNOWN_IID(StdMarshalInfo),
-    ADD_KNOWN_IID(Storage),
-    ADD_KNOWN_IID(Stream),
-    ADD_KNOWN_IID(StubManager),
-    ADD_KNOWN_IID(Unknown),
-    ADD_KNOWN_IID(ViewObject),
-    ADD_KNOWN_IID(ViewObject2),
-    ADD_KNOWN_GUID(IID_IDispatch),
-    ADD_KNOWN_GUID(IID_IWebBrowser),
-    ADD_KNOWN_GUID(IID_IWebBrowserApp),
-    ADD_KNOWN_GUID(IID_IWebBrowser2),
-    ADD_KNOWN_GUID(IID_IWebBrowser),
-    ADD_KNOWN_GUID(DIID_DWebBrowserEvents2),
-    ADD_KNOWN_GUID(DIID_DWebBrowserEvents),
-  };
-
-  // don't clobber preprocessor name space
-  #undef ADD_KNOWN_IID
-  #undef ADD_KNOWN_GUID
-
-  // try to find the interface in the table
-  for ( size_t ui = 0; ui < WXSIZEOF(aKnownIids); ui++ ) 
-  {
-    if ( riid == *aKnownIids[ui].pIid ) 
-    {
-      return aKnownIids[ui].szName;
-    }
-  }
-
-  // unknown IID, just transform to string
-  LPOLESTR str = NULL;
-  StringFromIID(riid, &str);
-  if (str)
-  {
-      wxString s = str;
-      CoTaskMemFree(str);
-      return s;
-  }
-  else
-      return "StringFromIID() error";
-}
 
