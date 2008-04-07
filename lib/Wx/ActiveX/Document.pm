@@ -3,7 +3,7 @@
 ## Purpose:     Wx::ActiveX::Document (Internet Explorer Wrapper)
 ## Author:      Mark Dootson.
 ## Created:     2008-04-02
-## SVN-ID:      $Id: Document.pm 2355 2008-04-07 07:03:52Z mdootson $
+## SVN-ID:      $Id: Document.pm 2358 2008-04-07 08:24:26Z mdootson $
 ## Copyright:   (c) 2002 - 2008 Graciliano M. P., Mattia Barbon, Mark Dootson
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -15,7 +15,7 @@ use Wx::ActiveX::IE qw( :iexplorer );
 use base qw( Wx::ActiveX::IE );
 use Wx qw( wxID_ANY wxDefaultPosition wxDefaultSize);
 
-our $VERSION = '0.06'; # Wx::ActiveX Version
+our $VERSION = '0.07'; # Wx::ActiveX Version
 
 our (@EXPORT_OK, %EXPORT_TAGS);
 $EXPORT_TAGS{everything} = \@EXPORT_OK;
@@ -95,7 +95,7 @@ use Wx qw( wxTheApp wxDEFAULT_FRAME_STYLE wxID_ANY wxVERTICAL wxALL wxEXPAND );
 use base qw( Wx::Frame );
 use Wx::Event qw( EVT_CLOSE );
 
-our $VERSION = 0.06;
+our $VERSION = 0.07;
 
 # class data
 my $__wxadf_sessiondata = {};

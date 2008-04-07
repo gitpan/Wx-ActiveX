@@ -3,7 +3,7 @@
 ## Purpose:     Wx::ActiveX::IE (Internet Explorer)
 ## Author:      Graciliano M. P.
 ## Created:     01/09/2002
-## SVN-ID:      $Id: IE.pm 2355 2008-04-07 07:03:52Z mdootson $
+## SVN-ID:      $Id: IE.pm 2359 2008-04-07 09:55:20Z mdootson $
 ## Copyright:   (c) 2002 - 2008 Graciliano M. P., Mattia Barbon, Mark Dootson
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -12,9 +12,9 @@
 package Wx::ActiveX::IE;
 use strict ;
 use Wx::ActiveX;
-use base qw( Wx::IEHtmlWin );
+use base qw( Wx::IEHtmlWin  Wx::ActiveX );
 
-our $VERSION = '0.06'; # Wx::ActiveX Version
+our $VERSION = '0.07'; # Wx::ActiveX Version
 
 our (@EXPORT_OK, %EXPORT_TAGS);
 $EXPORT_TAGS{everything} = \@EXPORT_OK;

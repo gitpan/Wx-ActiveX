@@ -3,7 +3,7 @@
 ## Purpose:     Wx::ActiveX::Acrobat (Acrobat Reader)
 ## Author:      Simon Flack
 ## Created:     23/07/2003
-## SVN-ID:      $Id: Acrobat.pm 2355 2008-04-07 07:03:52Z mdootson $
+## SVN-ID:      $Id: Acrobat.pm 2358 2008-04-07 08:24:26Z mdootson $
 ## Copyright:   (c) 2003 Simon Flack
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -15,7 +15,7 @@ use Wx qw( wxDefaultPosition wxDefaultSize );
 use Wx::ActiveX;
 use base qw( Wx::ActiveX );
 
-our $VERSION = '0.06'; # Wx::ActiveX Version
+our $VERSION = '0.07'; # Wx::ActiveX Version
 
 our (@EXPORT_OK, %EXPORT_TAGS);
 $EXPORT_TAGS{everything} = \@EXPORT_OK;
