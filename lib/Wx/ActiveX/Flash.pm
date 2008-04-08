@@ -3,7 +3,7 @@
 ## Purpose:     Wx::ActiveX::Flash (Shockwave Flash)
 ## Author:      Graciliano M. P.
 ## Created:     14/04/2003
-## SVN-ID:      $Id: Flash.pm 2358 2008-04-07 08:24:26Z mdootson $
+## SVN-ID:      $Id: Flash.pm 2361 2008-04-07 10:12:40Z mdootson $
 ## Copyright:   (c) 2002 - 2008 Graciliano M. P., Mattia Barbon, Mark Dootson
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -14,7 +14,7 @@ use Wx::ActiveX ;
 use strict ;
 use base qw( Wx::ActiveX );
 
-our $VERSION = '0.07'; # Wx::ActiveX Version
+our $VERSION = '0.08'; # Wx::ActiveX Version
 
 #######
 # NEW #
