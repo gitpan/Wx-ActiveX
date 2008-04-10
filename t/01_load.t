@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-## SVN-ID:      $Id: 01_load.t 2354 2008-04-05 23:40:04Z mdootson $
+## SVN-ID:      $Id: 01_load.t 2364 2008-04-10 04:21:35Z mdootson $
 
 use Test::More tests => 10;
 
@@ -16,6 +16,7 @@ BEGIN {
         use_ok( 'Wx::ActiveX::Browser' );
         use_ok( 'Wx::ActiveX::ScriptControl' );
         #use_ok( 'Wx::ActiveX::Template' );
+        #use_ok( 'Wx::DemoModules::wxActiveX' );
 }
 
 1;

@@ -3,7 +3,7 @@
 ## Purpose:     Alternative control for MSScriptControl
 ## Author:      Mark Dootson.
 ## Created:     2008-04-04
-## SVN-ID:      $Id: ScriptControl.pm 2361 2008-04-07 10:12:40Z mdootson $
+## SVN-ID:      $Id: ScriptControl.pm 2364 2008-04-10 04:21:35Z mdootson $
 ## Copyright:   (c) 2002 - 2008 Graciliano M. P., Mattia Barbon, Mark Dootson
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -22,7 +22,7 @@ use Wx qw( wxDefaultPosition wxDefaultSize );
 use Wx::ActiveX;
 use base qw( Wx::ActiveX );
 
-our $VERSION = '0.08'; # Wx::ActiveX Version
+our $VERSION = '0.09'; # Wx::ActiveX Version
 
 our (@EXPORT_OK, %EXPORT_TAGS);
 $EXPORT_TAGS{everything} = \@EXPORT_OK;

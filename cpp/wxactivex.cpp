@@ -1,5 +1,5 @@
 
-/* SVN-ID:      $Id: wxactivex.cpp 2355 2008-04-07 07:03:52Z mdootson $ */
+/* SVN-ID:      $Id: wxactivex.cpp 2364 2008-04-10 04:21:35Z mdootson $ */
 
 /*
                 wxActiveX Library Licence, Version 3
@@ -1391,6 +1391,12 @@ wxString wxActiveX::GetMethodArgName(int idx , int argx) {
      const wxActiveX::FuncX& func = this->GetMethodDesc(idx);
      const wxActiveX::ParamX& param = func.params[argx];
      return( param.name ) ;
+}
+
+void wxActiveX::ActivateOLEWindowDirect(bool activate)
+{
+    if (m_oleInPlaceActiveObject.Ok())
+        m_oleInPlaceActiveObject->OnFrameWindowActivate(activate);
 }
 
 ///////////////////////////////////////////////
