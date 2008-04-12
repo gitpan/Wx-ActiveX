@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 
-## SVN-ID:      $Id: 01_load.t 2364 2008-04-10 04:21:35Z mdootson $
+## SVN-ID:      $Id: 01_load.t 2367 2008-04-12 14:05:11Z mdootson $
 
-use Test::More tests => 10;
+use Test::More tests => 12;
 
 BEGIN {
 	use_ok( 'Wx::ActiveX' );
@@ -15,8 +15,8 @@ BEGIN {
         use_ok( 'Wx::ActiveX::Mozilla' );
         use_ok( 'Wx::ActiveX::Browser' );
         use_ok( 'Wx::ActiveX::ScriptControl' );
-        #use_ok( 'Wx::ActiveX::Template' );
-        #use_ok( 'Wx::DemoModules::wxActiveX' );
+        use_ok( 'Wx::ActiveX::Template' );
+        use_ok( 'Wx::ActiveX::QuickTime' );
 }
 
 1;

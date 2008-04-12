@@ -2,7 +2,7 @@
 ## Name:        Makefile.PL
 ## Purpose:     Makefile for Wx::ActiveX
 ## Author:      Graciliano M. P.
-## SVN-ID:      $Id: Makefile.PL 2356 2008-04-07 07:50:22Z mdootson $
+## SVN-ID:      $Id: Makefile.PL 2367 2008-04-12 14:05:11Z mdootson $
 ## Copyright:   (c) 2002 - 2008 Graciliano M. P., Mattia Barbon, Mark Dootson
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -20,8 +20,8 @@ wxWriteMakefile( NAME           => 'Wx::ActiveX',
                  VERSION_FROM   => 'lib/Wx/ActiveX.pm',
                  AUTHOR		    => 'Graciliano M. P',
                  LIBS           => $libs ,
-                 #EXE_FILES     => [ qw(script/wxactivex_template.pl) ],
                  WX_CORE_LIB	=> 'core base',
+                 EXE_FILES      => [ qw(script/wxactivex_template.pl) ],
                  NO_META 		=> 1,
                  WX_OVERLOAD	=> {	header  => 'cpp/ovl_const.h',
                                         source  => 'cpp/ovl_const.cpp',
@@ -29,6 +29,8 @@ wxWriteMakefile( NAME           => 'Wx::ActiveX',
                  PREREQ_PM	=> { Wx   => '0.57',
                                         },
                );
+
+# 
 
 # local variables:
 # mode: cperl
