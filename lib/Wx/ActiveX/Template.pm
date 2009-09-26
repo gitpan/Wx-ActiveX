@@ -3,7 +3,7 @@
 ## Purpose:     Template Builder for ActiveX Control
 ## Author:      Mark Dootson
 ## Created:     2008-04-7
-## SVN-ID:      $Id: Template.pm 2367 2008-04-12 14:05:11Z mdootson $
+## SVN-ID:      $Id: Template.pm 2375 2008-04-13 21:12:28Z mdootson $
 ## Copyright:   (c) 2008 Mark Dootson
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -17,7 +17,7 @@ use Exporter;
 use base qw( Exporter );
 use Wx;
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 
 our @EXPORT = qw( run_wxactivex_template );
 
@@ -458,7 +458,7 @@ sub run_query {
         my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
         $dateyear = $year + 1900;
         $mon ++;
-        my $date = $year . '-' . sprintf("%02d", $mon ) . '-' . sprintf("%02d", $mday);
+        my $date = $dateyear . '-' . sprintf("%02d", $mon ) . '-' . sprintf("%02d", $mday);
         my $packagefile = $modulename;
         $packagefile =~ s/::/\//g;
         $staticcode =~ s/HeadERamENDPAckAgeNAMe/$packagefile/g;
@@ -469,6 +469,7 @@ sub run_query {
  
     $staticcode =~ s/ModUlEPacKAgENaME/$modulename/g;
     $staticcode =~ s/ModuLEPROgiD/$progid/g;
+    $staticcode =~ s/STOPCONFUSION//g;
     
     my $dynamiccode = $staticcode;
     
@@ -527,14 +528,14 @@ sub standard_code_header {
 ## Purpose:     ActiveX Interface for ModuLEPROgiD
 ## Author:      HEAderLoginNaME
 ## Created:     HeadEARdateFormatEdCreated
-## SVN-ID:      $Id: Template.pm 2367 2008-04-12 14:05:11Z mdootson $
+## SVN-ID:      $Id: Template.pm 2375 2008-04-13 21:12:28Z mdootson $
 ## Copyright:   (c) HeadEARdateFormatEdYear  HEAderLoginNaME
 ## Licence:     This program is free software; you can redistribute it
 ##              and/or modify it under the same terms as Perl itself
 #######################################################################
 
 #----------------------------------------------------------------------
- package ModUlEPacKAgENaME;
+STOPCONFUSION package ModUlEPacKAgENaME;
 #----------------------------------------------------------------------
 
 use strict;
@@ -831,8 +832,7 @@ Version 0.10
 =head1 DESCRIPTION
 
 Utility to create module code for new ActiveX control interfaces.
-The modules for QuickTime and QuickTimeBrowser were created using
-this utility.
+The module for QuickTime was created using this utility.
 
 Start the GUI using one of the above methods, enter the required
 module name, ActiveX Control ProgID and a code identifier, and

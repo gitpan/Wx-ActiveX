@@ -3,7 +3,7 @@
 ## Purpose:     Allow Common IE and Mozilla interface
 ## Author:      Mark Dootson.
 ## Created:     2008-04-04
-## SVN-ID:      $Id: Browser.pm 2367 2008-04-12 14:05:11Z mdootson $
+## SVN-ID:      $Id: Browser.pm 2370 2008-04-12 23:37:37Z mdootson $
 ## Copyright:   (c) 2002 - 2008 Graciliano M. P., Mattia Barbon, Mark Dootson
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -16,7 +16,7 @@ require Exporter;
 use Wx::ActiveX;
 use base qw( Exporter );
 
-our $VERSION = '0.10'; # Wx::ActiveX Version
+our $VERSION = '0.11'; # Wx::ActiveX Version
 
 our (@EXPORT_OK, %EXPORT_TAGS);
 $EXPORT_TAGS{everything} = \@EXPORT_OK;

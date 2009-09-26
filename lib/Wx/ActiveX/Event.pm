@@ -3,7 +3,7 @@
 ## Purpose:     Wx::ActiveX events.
 ## Author:      Graciliano M. P.
 ## Created:     01/09/2003
-## SVN-ID:      $Id: Event.pm 2367 2008-04-12 14:05:11Z mdootson $
+## SVN-ID:      $Id: Event.pm 2370 2008-04-12 23:37:37Z mdootson $
 ## Copyright:   (c) 2002 - 2008 Graciliano M. P., Mattia Barbon, Mark Dootson
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -22,7 +22,7 @@ $EXPORT_TAGS{'activex'} = \@EXPORT_OK;
 # this module file retained only to support VERSION < 0.06 code.
 # new code should use Wx::ActiveX constants & EVT subs
 
-our $VERSION = '0.10'; # Wx::ActiveX Version
+our $VERSION = '0.11'; # Wx::ActiveX Version
 
 sub EVT_ACTIVEX ($$$$) { &Wx::ActiveX::EVT_ACTIVEX( @_ ) }
 

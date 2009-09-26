@@ -3,7 +3,7 @@
 ## Purpose:     Wx::ActiveX
 ## Author:      Graciliano M. P.
 ## Created:     25/08/2002
-## SVN-ID:      $Id: ActiveX.pm 2367 2008-04-12 14:05:11Z mdootson $
+## SVN-ID:      $Id: ActiveX.pm 2530 2009-02-12 16:51:45Z mdootson $
 ## Copyright:   (c) 2002 - 2008 Graciliano M. P., Mattia Barbon, Mark Dootson
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -21,7 +21,7 @@ require Exporter;
 our @ISA = qw( Wx::Window Exporter );
 use XSLoader;
 
-our $VERSION = '0.10'; # Wx::ActiveX Version
+our $VERSION = '0.12'; # Wx::ActiveX Version
 
 our $__wxax_debug;
 our @EXPORT_OK = qw ( wxACTIVEX_CLSID_MOZILLA_BROWSER wxACTIVEX_CLSID_WEB_BROWSER );
@@ -401,7 +401,7 @@ sub activex_get_event_code {
 
 use base qw( Wx::CommandEvent Wx::EvtHandler );
 
-our $VERSION = '0.09'; # Wx::ActiveX Version
+our $VERSION = '0.11'; # Wx::ActiveX Version
 
 my (%EVT_HANDLES) ;
 

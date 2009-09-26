@@ -3,7 +3,7 @@
 ## Purpose:     Languages for Wx/ActiveX/Template.pm
 ## Author:      Mark Dootson
 ## Created:     2008-04-7
-## SVN-ID:      $Id: Lang.pm 2367 2008-04-12 14:05:11Z mdootson $
+## SVN-ID:      $Id: Lang.pm 2370 2008-04-12 23:37:37Z mdootson $
 ## Copyright:   (c) 2008 Mark Dootson
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -16,7 +16,7 @@ use base qw( Exporter );
 use Wx qw( :everything );
 use Wx::Locale;
 
-our $VERSION = 0.01;
+our $VERSION = 0.11;
 
 our @EXPORT = qw( T );
 
