@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-## SVN-ID:      $Id: 01_load.t 2367 2008-04-12 14:05:11Z mdootson $
+## SVN-ID:      $Id: 01_load.t 2617 2009-09-26 03:32:40Z mdootson $
 
 use Test::More tests => 12;
 

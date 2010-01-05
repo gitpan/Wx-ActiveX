@@ -1,7 +1,11 @@
 
-# $Id: Changes 2370 2008-04-12 23:37:37Z mdootson $
+# $Id: Changes 2617 2009-09-26 03:32:40Z mdootson $
 
 Revision history for Perl extension Wx::ActiveX.
+
+0.13  2010-01-04
+    - compilation fix for mingw headers + select macro
+    - POD update for WMPlayer
 
 0.12  2009-09-26
     - various minor fixes for cpan release.
