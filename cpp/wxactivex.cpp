@@ -1,5 +1,5 @@
 
-/* SVN-ID:      $Id: wxactivex.cpp 2364 2008-04-10 04:21:35Z mdootson $ */
+/* SVN-ID:      $Id: wxactivex.cpp 2739 2010-01-05 05:13:25Z mdootson $ */
 
 /*
                 wxActiveX Library Licence, Version 3
@@ -58,6 +58,7 @@
 #undef read
 #undef select
 #undef write
+#undef send
 
 #include "wx/wxprec.h"
 #include "wxactivex.h"
@@ -65,6 +66,7 @@
 #include <wx/event.h>
 #include <wx/string.h>
 #include <wx/datetime.h>
+
 #include <windows.h>
 #include <ole2.h>
 #include <oleidl.h>
@@ -76,6 +78,7 @@
 #ifndef _MSC_VER
 #    include <oleauto.h>
 #endif
+
 
 #include <olectl.h>
 #include <Mshtml.h>

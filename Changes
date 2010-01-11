@@ -1,7 +1,11 @@
 
-# $Id: Changes 2617 2009-09-26 03:32:40Z mdootson $
+# $Id: Changes 2739 2010-01-05 05:13:25Z mdootson $
 
 Revision history for Perl extension Wx::ActiveX.
+
+0.14  2010-01-11
+    - fixed wxactivex_template
+    - fixed pause module parsing
 
 0.13  2010-01-04
     - compilation fix for mingw headers + select macro

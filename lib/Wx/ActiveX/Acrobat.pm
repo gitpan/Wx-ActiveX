@@ -3,7 +3,7 @@
 ## Purpose:     Wx::ActiveX::Acrobat (Acrobat Reader)
 ## Author:      Simon Flack
 ## Created:     23/07/2003
-## SVN-ID:      $Id: Acrobat.pm 2370 2008-04-12 23:37:37Z mdootson $
+## SVN-ID:      $Id: Acrobat.pm 2739 2010-01-05 05:13:25Z mdootson $
 ## Copyright:   (c) 2003 Simon Flack
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself

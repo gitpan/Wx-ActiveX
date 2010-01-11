@@ -3,7 +3,7 @@
 ## Purpose:     ActiveX Interface for QTOControl.QTControl
 ## Author:      Mark Dootson
 ## Created:     108-04-12
-## SVN-ID:      $Id: QuickTime.pm 2370 2008-04-12 23:37:37Z mdootson $
+## SVN-ID:      $Id: QuickTime.pm 2739 2010-01-05 05:13:25Z mdootson $
 ## Copyright:   (c) 108  Mark Dootson
 ## Licence:     This program is free software; you can redistribute it
 ##              and/or modify it under the same terms as Perl itself

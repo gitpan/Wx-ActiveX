@@ -2,14 +2,11 @@
 // Name:        ActiveX.xs
 // Purpose:     XS for Wx::ActiveX
 // Author:      Graciliano M. P.
-// SVN-ID:      $Id: ActiveX.xs 2355 2008-04-07 07:03:52Z mdootson $
+// SVN-ID:      $Id: ActiveX.xs 2739 2010-01-05 05:13:25Z mdootson $
 // Copyright:   (c) 2002 - 2008 Graciliano M. P., Mattia Barbon, Mark Dootson
 // Licence:     This program is free software; you can redistribute it and/or
 //              modify it under the same terms as Perl itself
 ////////////////////////////////////////////////////////////////////////////////
-
-
-
 #define PERL_NO_GET_CONTEXT
 
 #ifdef __WXMSW__
@@ -22,6 +19,7 @@
 
 #include <cpp/wxapi.h>
 #include <cpp/wxactivex.cpp>
+
 #undef THIS
 
 #include <cpp/v_cback.h>
@@ -30,6 +28,7 @@ MODULE=Wx__ActiveX
 
 BOOT:
   INIT_PLI_HELPERS( wx_pli_helpers );
+
 
 #include <cpp/IEHtmlWin.cpp>
 #include <cpp/MozillaHtmlWin.cpp>

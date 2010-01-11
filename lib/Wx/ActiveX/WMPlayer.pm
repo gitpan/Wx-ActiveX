@@ -3,7 +3,7 @@
 ## Purpose:     Wx::ActiveX::WMPlayer (Windows Media Player)
 ## Author:      Thiago S. V.
 ## Created:     14/04/2003
-## SVN-ID:      $Id: WMPlayer.pm 2370 2008-04-12 23:37:37Z mdootson $
+## SVN-ID:      $Id: WMPlayer.pm 2739 2010-01-05 05:13:25Z mdootson $
 ## Copyright:   (c) 2002 - 2008 Thiago S. V., Mattia Barbon, Mark Dootson
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself

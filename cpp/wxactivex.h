@@ -1,5 +1,5 @@
 
-/* SVN-ID: $Id: wxactivex.h 2364 2008-04-10 04:21:35Z mdootson $ */
+/* SVN-ID: $Id: wxactivex.h 2739 2010-01-05 05:13:25Z mdootson $ */
 /*
                 wxActiveX Library Licence, Version 3
                 ====================================
