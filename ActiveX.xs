@@ -2,7 +2,7 @@
 // Name:        ActiveX.xs
 // Purpose:     XS for Wx::ActiveX
 // Author:      Graciliano M. P.
-// SVN-ID:      $Id: ActiveX.xs 2739 2010-01-05 05:13:25Z mdootson $
+// SVN-ID:      $Id: ActiveX.xs 2756 2010-01-11 04:19:37Z mdootson $
 // Copyright:   (c) 2002 - 2008 Graciliano M. P., Mattia Barbon, Mark Dootson
 // Licence:     This program is free software; you can redistribute it and/or
 //              modify it under the same terms as Perl itself

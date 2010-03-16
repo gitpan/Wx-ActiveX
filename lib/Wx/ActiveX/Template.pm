@@ -3,8 +3,8 @@
 ## Purpose:     Template Builder for ActiveX Control
 ## Author:      Mark Dootson
 ## Created:     2008-04-7
-## SVN-ID:      $Id: Template.pm 2739 2010-01-05 05:13:25Z mdootson $
-## Copyright:   (c) 2008 Mark Dootson
+## SVN-ID:      $Id: Template.pm 2839 2010-03-11 09:14:17Z mdootson $
+## Copyright:   (c) 2008 - 2010 Mark Dootson
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
 #############################################################################
@@ -17,7 +17,7 @@ use Exporter;
 use base qw( Exporter );
 use Wx;
 
-our $VERSION = '0.14';
+our $VERSION = '0.15';
 
 our @EXPORT = qw( run_wxactivex_template );
 
@@ -460,7 +460,7 @@ sub run_query {
         $packagefile =~ s/::/\//g;
         $staticcode =~ s/HeadERamENDPAckAgeNAMe/$packagefile/g;
         $staticcode =~ s/HEAderLoginNaME/$user/g;
-        $staticcode =~ s/HeadEARdateFormatEdYear/$year/g;
+        $staticcode =~ s/HeadEARdateFormatEdYear/$dateyear/g;
         $staticcode =~ s/HeadEARdateFormatEdCreated/$date/g;
     }
  
@@ -526,7 +526,6 @@ sub standard_code_header {
 ## Purpose:     ActiveX Interface for ModuLEPROgiD
 ## Author:      HEAderLoginNaME
 ## Created:     HeadEARdateFormatEdCreated
-## SVN-ID:      $Id: Template.pm 2739 2010-01-05 05:13:25Z mdootson $
 ## Copyright:   (c) HeadEARdateFormatEdYear  HEAderLoginNaME
 ## Licence:     This program is free software; you can redistribute it
 ##              and/or modify it under the same terms as Perl itself
@@ -817,7 +816,7 @@ Wx::ActiveX::Template - ActiveX Control Module Creation Utility
 
 =head1 VERSION
 
-Version 0.10
+Version 0.15
 
 =head1 SYNOPSIS
 
@@ -855,7 +854,7 @@ pick list rather than accepting freeform input.
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright (C) 2008 Mark Dootson.
+Copyright (C) 2008 - 2010 Mark Dootson.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

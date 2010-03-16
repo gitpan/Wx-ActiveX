@@ -1,5 +1,5 @@
 
-/* SVN-ID: $Id: wxactivex.h 2739 2010-01-05 05:13:25Z mdootson $ */
+/* SVN-ID: $Id: wxactivex.h 2839 2010-03-11 09:14:17Z mdootson $ */
 /*
                 wxActiveX Library Licence, Version 3
                 ====================================
@@ -602,7 +602,7 @@ protected:
     // Methods
     FuncXStringMap  m_methods;
 
-    long MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam);
+    WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam);
 };
 
 // events

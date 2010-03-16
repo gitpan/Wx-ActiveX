@@ -1,10 +1,16 @@
 
-# $Id: Changes 2739 2010-01-05 05:13:25Z mdootson $
+# $Id: Changes 2846 2010-03-16 09:15:49Z mdootson $
 
 Revision history for Perl extension Wx::ActiveX.
 
+0.15  2010-03-16
+    - fixes for mingw-w64 / w32 build 
+    - fixes for msvc 64bit builds
+    - fixed datestamp in template output
+
 0.14  2010-01-11
     - fixed wxactivex_template
+    - fixed VC6 & MinGW builds
     - fixed pause module parsing
 
 0.13  2010-01-04

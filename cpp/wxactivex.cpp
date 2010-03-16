@@ -1,5 +1,5 @@
 
-/* SVN-ID:      $Id: wxactivex.cpp 2739 2010-01-05 05:13:25Z mdootson $ */
+/* SVN-ID:      $Id: wxactivex.cpp 2846 2010-03-16 09:15:49Z mdootson $ */
 
 /*
                 wxActiveX Library Licence, Version 3
@@ -950,8 +950,8 @@ public:
         {
 			// cdecl call
             // sometimes the pDispParams does not match the param info for a activex control
-            int nArg = min(func.params.size(), pDispParams->cArgs);
-            for (int i = nArg - 1; i >= 0; i--)
+            IV nArg = min((IV)func.params.size(), (IV)pDispParams->cArgs);
+            for (IV i = nArg - 1; i >= 0; i--)
             {
                 VARIANTARG& va = pDispParams->rgvarg[i];
 				wxActiveX::ParamX &px = func.params[nArg - i - 1];
@@ -965,9 +965,9 @@ public:
 
 		if (func.hasOut)
 		{
-            int nArg = min(func.params.size(), pDispParams->cArgs);
+            IV nArg = min((IV)func.params.size(), (IV)pDispParams->cArgs);
     		m_activeX->GetParent()->ProcessEvent(event);
-            for (int i = 0; i < nArg; i++)
+            for (IV i = 0; i < nArg; i++)
             {
                 VARIANTARG& va = pDispParams->rgvarg[i];
 				wxActiveX::ParamX &px = func.params[nArg - i - 1];
@@ -1887,7 +1887,7 @@ void wxActiveX::OnSize(wxSizeEvent& event)
 
 void wxActiveX::OnPaint(wxPaintEvent& event)
 {
-    wxLogTrace('%s', wxT("repainting activex win"));
+    /* wxLogTrace('%s', wxT("repainting activex win")); */
 	wxPaintDC dc(this);
 	int w, h;
 	GetSize(&w, &h);
@@ -1921,11 +1921,11 @@ void wxActiveX::OnMouse(wxMouseEvent& event)
 {
 	if (m_oleObjectHWND == NULL)
     {
-        wxLogTrace('%s', wxT("no oleInPlaceObject"));
+        /* wxLogTrace('%s', wxT("no oleInPlaceObject")); */
         event.Skip();
         return;
     }
-    wxLogTrace('%s', wxT("mouse event"));
+    /* wxLogTrace('%s', wxT("mouse event")); */
 	UINT msg = 0;
 	WPARAM wParam = 0;
 	LPARAM lParam = 0;
@@ -1981,7 +1981,7 @@ void wxActiveX::OnMouse(wxMouseEvent& event)
     wxLogTrace('%s', wxT("msg sent"));
 }
 
-long wxActiveX::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam)
+WXLRESULT wxActiveX::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam)
 {
 	if (m_oleObjectHWND == NULL)
         return wxWindow::MSWWindowProc(nMsg, wParam, lParam);
