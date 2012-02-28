@@ -2,7 +2,7 @@
 ## Name:        Makefile.PL
 ## Purpose:     Makefile for Wx::ActiveX
 ## Author:      Graciliano M. P.
-## SVN-ID:      $Id: Makefile.PL 2847 2010-03-16 09:38:21Z mdootson $
+## SVN-ID:      $Id: Makefile.PL 3130 2011-11-22 01:34:58Z mdootson $
 ## Copyright:   (c) 2002 - 2008 Graciliano M. P., Mattia Barbon, Mark Dootson
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -13,7 +13,12 @@ use Wx::build::MakeMaker ;
 use Config ;
 
 my $libs = '' ;
-if( $Config{cc} =~ /^cl/i ) { $libs = 'msvcprt.lib' ;}
+my $ccflags = $Config{ccflags};
+if( $Config{cc} =~ /^cl/i ) { 
+    $libs = 'msvcprt.lib' ;
+} else {
+    $ccflags .= ' -Wno-multichar -Wno-write-strings';
+}
 
 wxWriteMakefile( NAME           => 'Wx::ActiveX',
                  ABSTRACT_FROM  => 'lib/Wx/ActiveX.pm',
@@ -27,6 +32,7 @@ wxWriteMakefile( NAME           => 'Wx::ActiveX',
                                         source  => 'cpp/ovl_const.cpp',
                                     },
                  PREREQ_PM  => { Wx   => '0.57' },
+                 CCFLAGS    => $ccflags,
                );
 
 # 
